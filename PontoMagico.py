@@ -28,6 +28,13 @@ def extract_date(text):
         return parts[0]
     return None
 
+def extract_time_columns(row, num_batidas):
+    if isinstance(row, str):
+        batidas = row.split(' ')
+        if len(batidas) == num_batidas:
+            return batidas
+    return [None] * num_batidas
+
 @click.command()
 @click.option('--input', prompt='Caminho da planilha de entrada',
               help='Caminho para a planilha de entrada')
@@ -62,13 +69,22 @@ def main(input):
     df['Dia da Semana'] = df['Data da Marcação'].apply(extract_day_of_week)
     df['Data da Marcação'] = df['Data da Marcação'].apply(extract_date)
 
+    # Identificar quantidade de batidas
+    df['Quantidade de Batidas'] = df['Marcações'].apply(identify_batidas)
+
+    # Tratamento 2: Separar as batidas em colunas
+    max_splits = df['Quantidade de Batidas'].max()
+    for i in range(max_splits):
+        time_column = f'Batida {i+1}'
+        df[time_column] = df['Marcações'].apply(lambda x: x.split(' ')[i] if isinstance(x, str) and len(x.split(' ')) > i else None)
+
     # Tratamento 4: Limpar justificativa
     df['Justificativa'] = df['Justificativa'].apply(extract_justificativa)
 
     current_date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     output = os.path.join(output_folder, f"nova_planilha_{current_date}.xlsx")
     
-    df.drop(columns=['Marcações'], inplace=True)
+    df.drop(columns=['Marcações', 'Quantidade de Batidas'], inplace=True)
     df.to_excel(output, index=False, engine='openpyxl')  # Use o mecanismo 'openpyxl' para garantir compatibilidade com o Excel
 
     click.secho("Tratamento concluído! A nova planilha foi salva com sucesso.", fg='green')
