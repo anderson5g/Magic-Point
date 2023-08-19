@@ -35,6 +35,29 @@ def extract_time_columns(row, num_batidas):
             return batidas
     return [None] * num_batidas
 
+# Função para extrair e separar as batidas em colunas
+def extract_and_split_batidas(row):
+    if isinstance(row, str):
+        batidas = row.split(' ')
+        num_batidas = len(batidas)
+
+        separated_batidas = [None, None, None, None]
+        current_index = 0
+
+        for i in range(num_batidas):
+            if '-' in batidas[i]:
+                horas = batidas[i].split('-')
+                for hora in horas:
+                    separated_batidas[current_index] = hora
+                    current_index += 1
+            else:
+                separated_batidas[current_index] = batidas[i]
+                current_index += 1
+
+        return pd.Series(separated_batidas, index=['Batida 1', 'Batida 2', 'Batida 3', 'Batida 4'])
+
+    return pd.Series([None] * 4, index=['Batida 1', 'Batida 2', 'Batida 3', 'Batida 4'])
+
 @click.command()
 @click.option('--input', prompt='Caminho da planilha de entrada',
               help='Caminho para a planilha de entrada')
@@ -69,14 +92,9 @@ def main(input):
     df['Dia da Semana'] = df['Data da Marcação'].apply(extract_day_of_week)
     df['Data da Marcação'] = df['Data da Marcação'].apply(extract_date)
 
-    # Identificar quantidade de batidas
-    df['Quantidade de Batidas'] = df['Marcações'].apply(identify_batidas)
-
-    # Tratamento 2: Separar as batidas em colunas
-    max_splits = df['Quantidade de Batidas'].max()
-    for i in range(max_splits):
-        time_column = f'Batida {i+1}'
-        df[time_column] = df['Marcações'].apply(lambda x: x.split(' ')[i] if isinstance(x, str) and len(x.split(' ')) > i else None)
+    # Tratamento 3: Separar e preencher as colunas de batidas
+    df_batidas = df['Marcações'].apply(extract_and_split_batidas)
+    df = pd.concat([df, df_batidas], axis=1)
 
     # Tratamento 4: Limpar justificativa
     df['Justificativa'] = df['Justificativa'].apply(extract_justificativa)
@@ -84,7 +102,7 @@ def main(input):
     current_date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     output = os.path.join(output_folder, f"nova_planilha_{current_date}.xlsx")
     
-    df.drop(columns=['Marcações', 'Quantidade de Batidas'], inplace=True)
+    df.drop(columns=['Marcações'], inplace=True)
     df.to_excel(output, index=False, engine='openpyxl')  # Use o mecanismo 'openpyxl' para garantir compatibilidade com o Excel
 
     click.secho("Tratamento concluído! A nova planilha foi salva com sucesso.", fg='green')
