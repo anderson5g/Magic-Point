@@ -19,7 +19,11 @@ def extract_day_of_week(text):
 
 def extract_justificativa(text):
     if isinstance(text, str):
-        return text.split(' - ')[-1].strip()
+        parts = text.split(' - ')
+        if len(parts) > 1:
+            justificativa = parts[1].split(' |')[0].strip()
+            justificativa = justificativa.replace('BH', '').strip()  # Remover "BH" se presente
+            return justificativa
     return ''
 
 def extract_date(text):
