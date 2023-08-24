@@ -83,6 +83,12 @@ def main(input):
         click.secho(f"Erro ao carregar a planilha: {e}", fg='red')
         return
     
+    # Remover as colunas indesejadas
+    columns_to_remove = ['Empresa', 'CNPJ / CPF', 'Data de admissão', 'Rendimento H.Trab',
+                        'Rendimento H.E.', 'Rendimento Ad. N.', 'Rendimento Ad. N. HE. N.',
+                        'Rendimento C.Ponte', 'Faltas', 'DSR', 'Atrasos']
+    df.drop(columns=columns_to_remove, inplace=True)
+
     click.echo("Planilha carregada. Verificando as primeiras linhas...")
     print(df.head(6))  # Exibir as primeiras linhas para depuração
 
