@@ -103,6 +103,19 @@ def main(input):
     # Tratamento 4: Limpar justificativa
     df['Justificativa'] = df['Justificativa'].apply(extract_justificativa)
 
+    # Verifica se as colunas "Batida 2" e "Batida 3" estão presentes
+    if 'Batida 2' not in df.columns or 'Batida 3' not in df.columns:
+        click.secho("As colunas 'Batida 2' e 'Batida 3' não foram encontradas na planilha.", fg='red')
+        return
+
+    # Tratamento 2: Calcular colunas "Intrajornada" e "Carga Horária"
+    df['Intrajornada'] = pd.to_datetime(df['Batida 3']) - pd.to_datetime(df['Batida 2'])
+    df['Carga Horária'] = pd.to_datetime(df['Batida 4']) - pd.to_datetime(df['Batida 1']) - df['Intrajornada']
+
+    # Formatação das colunas de tempo
+    df['Intrajornada'] = df['Intrajornada'].apply(lambda x: f"{x.seconds//3600:02d}:{(x.seconds//60)%60:02d}" if pd.notna(x) else '')
+    df['Carga Horária'] = df['Carga Horária'].apply(lambda x: f"{x.seconds//3600:02d}:{(x.seconds//60)%60:02d}" if pd.notna(x) else '')
+
     current_date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     output = os.path.join(output_folder, f"nova_planilha_{current_date}.xlsx")
     
