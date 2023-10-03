@@ -123,6 +123,7 @@ def main(input):
     df['Carga Horária'] = df['Carga Horária'].apply(lambda x: f"{x.seconds//3600:02d}:{(x.seconds//60)%60:02d}" if pd.notna(x) else '')
 
     current_date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    os.makedirs(output_folder, exist_ok=True)
     output = os.path.join(output_folder, f"nova_planilha_{current_date}.xlsx")
     
     df.drop(columns=['Marcações'], inplace=True)
