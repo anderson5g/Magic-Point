@@ -12,6 +12,10 @@ Magic Point is a tool that simplifies the treatment of employee time clock marki
 - Cleaning of justifications 🔍
 - Generation of spreadsheet ready for analysis 📊
 
+## Observação sobre o uso do programa
+
+To use the program, you must have Python correctly installed.
+
 ## How to Use 📝
 
 1. **Download the Project:**
@@ -20,7 +24,7 @@ Magic Point is a tool that simplifies the treatment of employee time clock marki
 2. **Installation:**
    Run the `install.bat` file to set up the virtual environment and install the dependencies, or manually install the dependencies using pip.
 ```bash
-$ pip install -r requirements.txt
+$ pip3 install -r requirements.txt
 ```
 
 3. **Execution:**
