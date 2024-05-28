@@ -18,10 +18,16 @@ Magic Point is a tool that simplifies the treatment of employee time clock marki
    Clone this repository or download the ZIP code.
 
 2. **Installation:**
-   Run the `install.bat` file to set up the virtual environment and install the dependencies.
+   Run the `install.bat` file to set up the virtual environment and install the dependencies, or manually install the dependencies using pip.
+```bash
+$ pip install -r requirements.txt
+```
 
 3. **Execution:**
    Open the terminal and navigate to the project folder. Run the command:
+```bash
+$ python3 PontoMagico.py
+```
 
 4. **Input:**
 You will be asked for the path of the input spreadsheet (.xlsx). Enter the full path or drag the file to the terminal.
