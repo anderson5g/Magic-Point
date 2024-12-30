@@ -25,8 +25,7 @@ def extract_justificativa(text):
         parts = text.split(' - ')
         if len(parts) > 1:
             justificativa = parts[1].split(' |')[0].strip()
-            justificativa = justificativa.replace(
-                'BH', '').strip()  # Remover "BH" se presente
+            justificativa = justificativa.replace('BH', '').strip()
             return justificativa
     return ''
 
@@ -44,8 +43,6 @@ def extract_time_columns(row, num_batidas):
         if len(batidas) == num_batidas:
             return batidas
     return [None] * num_batidas
-
-# Função para extrair e separar as batidas em colunas
 
 
 def extract_and_split_batidas(row):
@@ -83,31 +80,37 @@ def main(input):
     output_folder = os.path.join(os.getcwd(), 'tratamentos')
 
     if not input.endswith('.xlsx'):
-        click.secho(
-            "O arquivo de entrada deve estar no formato .xlsx.", fg='red')
+        click.secho("O arquivo de entrada deve estar no formato .xlsx.", fg='red')
         return
 
     click.echo(f"Carregando a planilha de {input}...")
 
     try:
-        df = pd.read_excel(input, skiprows=5)  # Lê a partir da linha 6
+        # Ler a planilha ignorando as linhas de cabeçalho
+        df = pd.read_excel(input, header=6)
     except Exception as e:
         click.secho(f"Erro ao carregar a planilha: {e}", fg='red')
         return
 
-    # Remover as colunas indesejadas
-    columns_to_remove = ['Empresa', 'CNPJ / CPF', 'Data de admissão', 'Rendimento H.Trab',
-                         'Rendimento H.E.', 'Rendimento Ad. N.', 'Rendimento Ad. N. HE. N.',
-                         'Rendimento C.Ponte', 'Faltas', 'DSR', 'Atrasos']
-    df.drop(columns=columns_to_remove, inplace=True)
+    # Atualizar a lista de colunas a serem mantidas
+    columns_to_keep = [
+        'Nome da Pessoa', 'Matrícula', 'Estrutura organizacional', 
+        'Data da Marcação', 'Horário', 'Descontos', 
+        'Banco de horas Débito', 'Banco de horas Crédito', 
+        'Justificativa', 'Observação', 'Marcações'
+    ]
+    
+    existing_columns = [col for col in df.columns if any(keep in col for keep in columns_to_keep)]
+    
+    if not existing_columns:
+        click.secho("Colunas necessárias não encontradas na planilha.", fg='red')
+        print("Colunas disponíveis:", df.columns)
+        return
+
+    df = df[existing_columns]
 
     click.echo("Planilha carregada. Verificando as primeiras linhas...")
-    print(df.head(6))  # Exibir as primeiras linhas para depuração
-
-    if 'Data da Marcação' not in df.columns:
-        click.secho(
-            "A coluna 'Data da Marcação' não foi encontrada na planilha.", fg='red')
-        return
+    print(df.head(6))
 
     click.echo("Realizando tratamentos nos dados...")
 
@@ -120,19 +123,17 @@ def main(input):
     df = pd.concat([df, df_batidas], axis=1)
 
     # Tratamento 4: Limpar justificativa
-    df['Justificativa'] = df['Justificativa'].apply(extract_justificativa)
+    if 'Justificativa' in df.columns:
+        df['Justificativa'] = df['Justificativa'].apply(extract_justificativa)
 
     # Verifica se as colunas "Batida 2" e "Batida 3" estão presentes
     if 'Batida 2' not in df.columns or 'Batida 3' not in df.columns:
-        click.secho(
-            "As colunas 'Batida 2' e 'Batida 3' não foram encontradas na planilha.", fg='red')
+        click.secho("As colunas 'Batida 2' e 'Batida 3' não foram encontradas na planilha.", fg='red')
         return
 
     # Tratamento 2: Calcular colunas "Intrajornada" e "Carga Horária"
-    df['Intrajornada'] = pd.to_datetime(
-        df['Batida 3']) - pd.to_datetime(df['Batida 2'])
-    df['Carga Horária'] = pd.to_datetime(
-        df['Batida 4']) - pd.to_datetime(df['Batida 1']) - df['Intrajornada']
+    df['Intrajornada'] = pd.to_datetime(df['Batida 3']) - pd.to_datetime(df['Batida 2'])
+    df['Carga Horária'] = pd.to_datetime(df['Batida 4']) - pd.to_datetime(df['Batida 1']) - df['Intrajornada']
 
     # Formatação das colunas de tempo
     df['Intrajornada'] = df['Intrajornada'].apply(
@@ -144,12 +145,12 @@ def main(input):
     os.makedirs(output_folder, exist_ok=True)
     output = os.path.join(output_folder, f"nova_planilha_{current_date}.xlsx")
 
-    df.drop(columns=['Marcações'], inplace=True)
-    # Use o mecanismo 'openpyxl' para garantir compatibilidade com o Excel
+    if 'Marcações' in df.columns:
+        df.drop(columns=['Marcações'], inplace=True)
+    
     df.to_excel(output, index=False, engine='openpyxl')
 
-    click.secho(
-        "Tratamento concluído! A nova planilha foi salva com sucesso.", fg='green')
+    click.secho("Tratamento concluído! A nova planilha foi salva com sucesso.", fg='green')
 
 
 if __name__ == '__main__':
