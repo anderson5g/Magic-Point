@@ -1,53 +1,81 @@
 # Magic Point 🕒✨
 
-![GitHub](https://img.shields.io/github/license/seu-usuario/ponto-magico)
-![GitHub last commit](https://img.shields.io/github/last-commit/seu-usuario/ponto-magico)
+![GitHub](https://img.shields.io/github/license/anderson5g/ponto-magico)
+![GitHub last commit](https://img.shields.io/github/last-commit/anderson5g/ponto-magico)
 
-Magic Point is a tool that simplifies the treatment of employee time clock markings, transforming raw records into valuable data for analysis.
+Magic Point é uma ferramenta desenvolvida para simplificar o tratamento de marcações de ponto de funcionários, transformando registros brutos em dados valiosos para análise. 
 
-## Features 🚀
+## Funcionalidades 🚀
 
-- Automatic separation of Date and Day of the Week 📆
-- Intelligent division of clock-ins ⏰
-- Cleaning of justifications 🔍
-- Generation of spreadsheet ready for analysis 📊
+- Separação automática de Data e Dia da Semana 
+- Divisão inteligente das marcações de ponto (batidas) 
+- Limpeza e organização das justificativas 
+- Geração de planilha pronta para análise 
 
-## Note on using the program
+## Pré-requisitos 📋
 
-To use the program, you must have Python installed correctly. You can download the latest version of Python [here](https://www.python.org/downloads/).
+Para utilizar o programa, você deve ter o Python 3.9 ou superior instalado corretamente. Recomenda-se o uso da versão mais recente do Python para melhor compatibilidade com as bibliotecas mais atuais. Você pode baixar a última versão do Python [aqui](https://www.python.org/downloads/).
 
-## How to Use 📝
+## Como Usar 📝
 
-1. **Download the Project:**
-   Clone this repository or download the ZIP code.
+1.  **Baixar o Projeto:**
+    Clone este repositório para o seu ambiente local ou faça o download do arquivo ZIP.
 
-2. **Installation:**
-   Run the `install.bat` file to set up the virtual environment and install the dependencies, or manually install the dependencies using pip.
-```bash
-$ pip3 install -r requirements.txt
-```
+    ```bash
+    git clone [https://github.com/Draken573/Magic-Point.git](https://github.com/Draken573/Magic-Point.git) # Substitua pelo seu link do repositório, se diferente
+    cd Magic-Point
+    ```
 
-3. **Execution:**
-   Open the terminal and navigate to the project folder. Run the command:
-```bash
-$ python3 PontoMagico.py
-```
+2.  **Configuração do Ambiente Virtual e Instalação de Dependências:**
+    É **altamente recomendado** o uso de um ambiente virtual para isolar as dependências do projeto e evitar conflitos com outras instalações Python no seu sistema.
 
-4. **Input:**
-You will be asked for the path of the input spreadsheet (.xlsx). Enter the full path or drag the file to the terminal.
+    * **Criar e ativar o ambiente virtual:**
+        ```bash
+        python3 -m venv venv
+        source venv/bin/activate # Para Linux/macOS
+        # Ou .\\venv\\Scripts\\activate.bat (Para Windows - Prompt de Comando)
+        # Ou .\\venv\\Scripts\\Activate.ps1 (Para Windows - PowerShell)
+        ```
+        (Substitua `venv` pelo nome que preferir para o seu ambiente virtual).
 
-5. **Results:**
-The program will perform the necessary treatments and create a new spreadsheet in the `treatments` folder.
+    * **Instalar dependências de sistema (se necessário):**
+        Em sistemas Debian/Ubuntu, se você encontrar erros de compilação relacionados a pacotes como `numpy` ou `pandas`, pode ser necessário instalar as ferramentas de desenvolvimento do Python e outras dependências de compilação:
+        ```bash
+        sudo apt update
+        sudo apt install python3-dev build-essential libssl-dev libffi-dev
+        ```
 
-## Example of Use 👁️‍🗨️
+    * **Atualizar `pip`, `setuptools` e `wheel` no ambiente virtual:**
+        Garanta que as ferramentas de instalação estejam atualizadas:
+        ```bash
+        pip install --upgrade pip setuptools wheel
+        ```
 
-Suppose you have a spreadsheet `time_report.xlsx` with time clock markings. Run Magic Point and provide the path of the spreadsheet. After processing, you will find the treated spreadsheet in the `treatments` folder, ready for analysis.
+    * **Instalar as dependências do projeto:**
+        ```bash
+        pip install -r requirements.txt
+        ```
 
-## License 📜
+3.  **Execução:**
+    Com o ambiente virtual ativado e as dependências instaladas, execute o script principal:
+    ```bash
+    python PontoMagico.py
+    ```
+
+4.  **Entrada de Dados:**
+    O programa solicitará o caminho completo da planilha de entrada (.xlsx). Insira o caminho completo ou arraste o arquivo para a janela do terminal.
+
+5.  **Resultados:**
+    Após o processamento, uma nova planilha tratada será gerada e salva na pasta `tratamentos`, localizada no diretório do projeto.
+
+## Exemplo de Uso 👁️‍🗨️
+
+Imagine que você possui uma planilha de marcações de ponto chamada `relatorio_ponto.xlsx`. Ao executar o Magic Point e fornecer o caminho desta planilha, o programa irá processá-la e gerar uma nova planilha na pasta `tratamentos`, pronta para análise detalhada.
+
+## Licença 📜
 
 ---
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) ile for more details.
+Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para mais detalhes. 
 
-
-Made with 💪 by [Anderson Monteiro](https://github.com/Draken573) 💻
+Feito com 💪 por [Anderson Monteiro](https://github.com/Draken573) 💻
